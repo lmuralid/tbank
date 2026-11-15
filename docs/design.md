@@ -1,6 +1,6 @@
 # tbank — Concept and Domain Design
 
-Status: draft for review. No code yet.
+Status: implemented in v0.1 (see README.md for layout).
 
 ## 1. Purpose
 
@@ -41,6 +41,8 @@ where residents exchange **elder care** and **pet care**.
 ### 3.2 Earnest Time Deposit (ETD)
 - Created when a member joins, either as advance time given at sign-up or
   from their first volunteer time.
+- The ETD **label** is the one the member chooses, or the label of their
+  first volunteer activity.
 - The ETD is **starting credit**. It is **locked to the member**: they can
   spend it on their own needs, but it **cannot be transferred** to anyone else.
 - ETD is tracked **separately from debt**. ETD is the start, debt is ongoing.
@@ -71,24 +73,30 @@ where residents exchange **elder care** and **pet care**.
 - Earned credit can be **transferred to any member without limit**, for
   example a child giving credits to an elderly parent.
 - ETD cannot be transferred (see 3.2).
+- **Any member can pay off another member's debt** with their earned credit.
 
 ## 4. Transaction lifecycle
 
 ```
   claimed ──► pending confirmation ──► confirmed ──► posted to ledger
                     │
-                    ├──► rejected (disputed)
+                    ├──► rejected (disputed) ──► coordinator: upheld | dismissed
                     │
-                    └──► not confirmed in time ──► default on the confirmer
+                    └──► not confirmed in time ──► auto-confirmed + default on confirmer
 ```
 
 1. The **provider** records time given: who received it, label, hours, when.
 2. The **confirmer** (the recipient, their guardian, or the pet owner)
    confirms it.
 3. On confirmation, the provider is credited and the recipient is debited
-   within that label.
-4. **Confirming is the confirmer's duty.** Not confirming within the allowed
-   window is a **default** recorded against the confirmer.
+   within that label. The recipient pays from earned credit, then ETD, then
+   debt. Credit received first repays any debt in that label.
+4. **Confirming is the confirmer's duty.** When the window ends without
+   confirmation, the **credit and debit are committed anyway** and a
+   **default** is recorded against the confirmer.
+5. If the confirmer **rejects** the claim, a **coordinator** settles it:
+   uphold (posted) or dismiss. A coordinator cannot settle a dispute they
+   are part of.
 
 ### 4.1 Resolving a default
 - **Cover for me**: the defaulting member passes the duty to another member,
@@ -161,29 +169,23 @@ configuration file.
 - A senior with limited mobility who runs into debt may settle it in money.
 - A resident who cannot keep a commitment asks a neighbour to cover for them.
 
-## 11. Language recommendation
+## 11. Language
 
-**Python** for the core package:
-- Flat file and SQLite support are built in, so testing needs no extra infrastructure.
-- Clear, readable domain code suits a rules-heavy ledger.
-- A small web API can be added on top later for a mobile or web sample app,
-  which can then be written in any language.
+**Python**, standard library only (no dependencies). SQLite and JSON are
+built in, so testing needs no infrastructure. A web API for a mobile or web
+sample app can be added on top later, in any language.
 
-Alternative: **TypeScript**, if one language across the package, the API and a
-mobile app (React Native) matters more than quick standalone testing.
+## 12. Decisions taken
 
-## 12. Open questions
-
-1. **Spending order**: when a member receives time, is it paid from earned
-   credit first, then ETD, then debt? (Assumed.)
-2. **ETD label**: is ETD unlabelled, and so spendable under any label? (Assumed.)
-3. **Default meaning**: does "default" cover both a missed confirmation and a
-   promised session not delivered? (Assumed both.)
-4. **Missed confirmation outcome**: after the window ends, is the hour posted
-   to the provider anyway, or does it stay pending?
-5. **Disputes**: who settles a rejected contribution — a coordinator, or no
-   one for now?
-6. **Can debt be transferred** (another member pays it off with their credit)?
+| Question | Decision |
+|---|---|
+| Spending order | Earned credit, then ETD, then debt. |
+| ETD label | Chosen at sign-up, or the label of the first volunteer activity. |
+| Default | Covers both a missed confirmation and an undelivered commitment. |
+| Missed confirmation | Credit and debit are committed when the window ends. |
+| Disputes | Settled by a coordinator. The first member to join is coordinator. |
+| Debt pay-off | Any member may pay off any member's debt. |
+| Eligibility attributes | Set by a coordinator, not self-declared at join. |
 
 ## 13. Later
 

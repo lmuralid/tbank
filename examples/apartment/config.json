@@ -1,0 +1,28 @@
+{
+  "name": "Green Meadows Apartments",
+  "labels": {
+    "elder-care/companionship": {"description": "Visiting, talking, reading aloud"},
+    "elder-care/errands": {"description": "Groceries, pharmacy, bill payments"},
+    "elder-care/nursing": {"description": "Basic nursing support by trained members"},
+    "pet-care/dog-walking": {"description": "Walking a resident's dog"},
+    "pet-care/feeding": {"description": "Feeding and checking on pets"}
+  },
+  "equivalence_groups": [],
+  "confirmation_window_hours": 48,
+  "commitment_grace_hours": 24,
+  "etd_default_hours": 2,
+  "debt_limit": null,
+  "auto_repay_debt": true,
+  "max_hours_per_claim": 8,
+  "money": {
+    "currency": "INR",
+    "default_rate": 200,
+    "rates": {"elder-care/nursing": 400},
+    "eligibility": {
+      "all": [
+        {"attr": "age", "op": ">=", "value": 60},
+        {"attr": "mobility", "op": "==", "value": "limited"}
+      ]
+    }
+  }
+}
