@@ -12,7 +12,7 @@ from .errors import (AuthError, InvalidOperation, NotFound, PermissionDenied,
                      TBankError, ValidationError)
 from .storage import JsonFileStorage, MemoryStorage, SqliteStorage, open_storage
 
-__version__ = "0.1.0"
+__version__ = "1.0.2611"
 
 __all__ = [
     "TimeBank", "CommunityConfig", "MoneyConfig",

@@ -38,6 +38,18 @@ class ProjectRules(unittest.TestCase):
                     self.assertIsNone(pattern.search(text), f"category word in {name}")
 
 
+class VersionRules(unittest.TestCase):
+    def test_version_format_and_consistency(self):
+        import tbank
+        self.assertRegex(tbank.__version__, r"^\d+\.\d+\.\d{2}(0[1-9]|1[0-2])$",
+                         "version must be MAJOR.MINOR.YYMM")
+        with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as fh:
+            self.assertIn(f'version = "{tbank.__version__}"', fh.read())
+        with open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8") as fh:
+            self.assertIn(f"## v{tbank.__version__}", fh.read(),
+                          "CHANGELOG.md needs a section for this version")
+
+
 class EligibilityTests(unittest.TestCase):
     rule = {"any": [{"attr": "age", "op": ">=", "value": 80},
                     {"not": {"attr": "mobility", "op": "==", "value": "full"}}]}

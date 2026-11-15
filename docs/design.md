@@ -1,6 +1,6 @@
 # tbank — Concept and Domain Design
 
-Status: implemented in v0.1 (see README.md for layout).
+Status: implemented in v1.0.2611 (see README.md for layout and CHANGELOG.md for releases).
 
 ## 1. Purpose
 
