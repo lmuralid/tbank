@@ -13,7 +13,7 @@ default against the provider; it can still be covered or bought out.
 from datetime import timedelta
 from typing import List, Optional
 
-from .clock import iso, parse
+from .clock import parse
 from .context import Context, new_id
 from .defaults import DefaultService
 from .errors import InvalidOperation, PermissionDenied, ValidationError
